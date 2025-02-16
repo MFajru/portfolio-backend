@@ -1,5 +1,7 @@
 package com.mfajruramadhan.portfolio.dto;
 
+import com.mfajruramadhan.portfolio.model.Project;
+import com.mfajruramadhan.portfolio.model.ProjectDetails;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
@@ -15,6 +17,23 @@ public class AddProjectRequest {
     private String responsibilities;
     private String description;
     private String attachment;
+
+    public void mappingProjects(Project newProject,  ProjectDetails newProjDetails) {
+        newProject.setTitle(getTitle());
+        newProject.setThumbnail(getThumbnail());
+        newProject.setCategory(getCategory());
+
+        newProjDetails.setAttachment(getAttachment());
+        newProjDetails.setDescription(getDescription());
+        newProjDetails.setDuration(getDuration());
+        newProjDetails.setEndDate(getEndDate());
+        newProjDetails.setStartDate(getStartDate());
+        newProjDetails.setResponsibilities(getResponsibilities());
+        newProjDetails.setRole(getRole());
+
+        newProjDetails.setProject(newProject);
+
+    }
 
     public String getTitle() {
         return title;

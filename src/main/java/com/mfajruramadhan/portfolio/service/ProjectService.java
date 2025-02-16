@@ -1,5 +1,6 @@
 package com.mfajruramadhan.portfolio.service;
 
+import com.mfajruramadhan.portfolio.exceptions.BadRequestException;
 import com.mfajruramadhan.portfolio.exceptions.NotFoundException;
 import com.mfajruramadhan.portfolio.interfaces.IProjectService;
 import com.mfajruramadhan.portfolio.model.Project;
@@ -9,6 +10,7 @@ import com.mfajruramadhan.portfolio.repository.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,9 +44,27 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public void createProject(Project projectReq, ProjectDetails projectDetailsReq) {
-        projectRepository.save(projectReq);
-        projectDetailsRepository.save(projectDetailsReq);
+    public void createProject(Project project, ProjectDetails projectDetails) {
+        List<String> listMess = new ArrayList<>();
+
+        if (projectDetails.getAttachment() == null) listMess.add("attachment");
+        if (project.getThumbnail() == null) listMess.add("thumbnail");
+        if (projectDetails.getResponsibilities() == null) listMess.add("responsibilities");
+        if (projectDetails.getRole() == null) listMess.add("role");
+        if (projectDetails.getDuration() == null) listMess.add("duration");
+        if (projectDetails.getDescription() == null) listMess.add("description");
+        if (project.getCategory() == null) listMess.add("category");
+        if (projectDetails.getStartDate() == null) listMess.add("start_date");
+        if (projectDetails.getEndDate() == null) listMess.add("end_date");
+        if (project.getTitle() == null) listMess.add("title");
+
+        if (!listMess.isEmpty()) {
+            String joinedMess = String.join(", ", listMess) + " must be filled!";
+            throw new BadRequestException(joinedMess);
+        }
+
+        projectRepository.save(project);
+        projectDetailsRepository.save(projectDetails);
     }
 
     @Override

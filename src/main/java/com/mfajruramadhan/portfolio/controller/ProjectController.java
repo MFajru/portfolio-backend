@@ -1,6 +1,7 @@
 package com.mfajruramadhan.portfolio.controller;
 
 import com.mfajruramadhan.portfolio.dto.*;
+import com.mfajruramadhan.portfolio.exceptions.BadRequestException;
 import com.mfajruramadhan.portfolio.interfaces.IProjectService;
 import com.mfajruramadhan.portfolio.model.Project;
 import com.mfajruramadhan.portfolio.model.ProjectDetails;
@@ -55,15 +56,11 @@ public class ProjectController {
     public ResponseEntity<PostResponse> addProject(@RequestBody AddProjectRequest request) {
         Project newProject = new Project();
         ProjectDetails newProjDetails = new ProjectDetails();
-        PostResponse res = new PostResponse();
-        boolean isRequestValid = checkAddProjectRequest(request, res);
 
-        if (!isRequestValid) {
-            return new ResponseEntity<PostResponse>(res, HttpStatus.BAD_REQUEST);
-        }
-
-        mappingProjectAndDetails(newProject, newProjDetails, request);
+        request.mappingProjects(newProject, newProjDetails);
         projectService.createProject(newProject, newProjDetails);
+
+        PostResponse res = new PostResponse();
         res.setMessage("Successfully created data!");
         return new ResponseEntity<PostResponse>(res, HttpStatus.CREATED);
     }
@@ -100,14 +97,6 @@ public class ProjectController {
         return new ResponseEntity<PostResponse>(res, HttpStatus.NOT_FOUND);
     }
 
-
-   private static void mappingProject(Project project, ProjectsResponse projectsResponse) {
-       projectsResponse.setId(project.getId());
-       projectsResponse.setCategory(project.getCategory());
-       projectsResponse.setThumbnail(project.getThumbnail());
-       projectsResponse.setTitle(project.getTitle());
-   }
-
    private static void mappingProjectAndDetails(Project newProject, ProjectDetails newProjDetails, AddProjectRequest request) {
        newProject.setTitle(request.getTitle());
        newProject.setThumbnail(request.getThumbnail());
@@ -122,24 +111,4 @@ public class ProjectController {
        newProjDetails.setRole(request.getRole());
        newProjDetails.setProject(newProject);
    }
-
-    private static boolean checkAddProjectRequest(AddProjectRequest request, PostResponse response) {
-        List<String> listMess = new ArrayList<>();
-
-        if (request.getAttachment() == null) listMess.add("attachment");
-        if (request.getThumbnail() == null) listMess.add("thumbnail");
-        if (request.getResponsibilities() == null) listMess.add("responsibilities");
-        if (request.getRole() == null) listMess.add("role");
-        if (request.getDuration() == null) listMess.add("duration");
-        if (request.getDescription() == null) listMess.add("description");
-        if (request.getCategory() == null) listMess.add("category");
-        if (request.getStartDate() == null) listMess.add("start_date");
-        if (request.getEndDate() == null) listMess.add("end_date");
-        if (request.getTitle() == null) listMess.add("title");
-
-        String joinedMess = String.join(", ", listMess);
-        response.setMessage(joinedMess + " must be filled!");
-
-        return listMess.isEmpty();
-    }
 }
