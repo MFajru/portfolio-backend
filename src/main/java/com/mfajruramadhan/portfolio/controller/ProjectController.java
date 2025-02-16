@@ -1,21 +1,15 @@
 package com.mfajruramadhan.portfolio.controller;
 
 import com.mfajruramadhan.portfolio.dto.*;
-import com.mfajruramadhan.portfolio.exceptions.BadRequestException;
 import com.mfajruramadhan.portfolio.interfaces.IProjectService;
 import com.mfajruramadhan.portfolio.model.Project;
 import com.mfajruramadhan.portfolio.model.ProjectDetails;
-import com.mfajruramadhan.portfolio.utils.ValidateDataTypes;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("project")
@@ -69,18 +63,14 @@ public class ProjectController {
     public ResponseEntity<PostResponse> updateProject(@RequestBody AddProjectRequest request, @PathVariable Long id) {
         Project newProject = new Project();
         ProjectDetails newProjDetails = new ProjectDetails();
-        mappingProjectAndDetails(newProject, newProjDetails, request);
-        boolean isExistAndDataUpdated =  projectService.updateProject(id, newProject, newProjDetails);
+
+        request.mappingProjects(newProject, newProjDetails);
+        projectService.updateProject(id, newProject, newProjDetails);
+
         PostResponse res = new PostResponse();
+        res.setMessage("Successfully updated data!");
 
-        if (isExistAndDataUpdated) {
-            res.setMessage("Successfully updated data!");
-            return ResponseEntity.ok(res);
-        }
-        String message = "Data with id " + id + " is not found. Failed to update data";
-        res.setMessage(message);
-        return new ResponseEntity<PostResponse>(res, HttpStatus.NOT_FOUND);
-
+        return ResponseEntity.ok(res);
     }
 
     @DeleteMapping(value = "/{id}/delete", produces = "application/json")
@@ -96,19 +86,4 @@ public class ProjectController {
         res.setMessage(message);
         return new ResponseEntity<PostResponse>(res, HttpStatus.NOT_FOUND);
     }
-
-   private static void mappingProjectAndDetails(Project newProject, ProjectDetails newProjDetails, AddProjectRequest request) {
-       newProject.setTitle(request.getTitle());
-       newProject.setThumbnail(request.getThumbnail());
-       newProject.setCategory(request.getCategory());
-
-       newProjDetails.setAttachment(request.getAttachment());
-       newProjDetails.setDescription(request.getDescription());
-       newProjDetails.setDuration(request.getDuration());
-       newProjDetails.setEndDate(request.getEndDate());
-       newProjDetails.setStartDate(request.getStartDate());
-       newProjDetails.setResponsibilities(request.getResponsibilities());
-       newProjDetails.setRole(request.getRole());
-       newProjDetails.setProject(newProject);
-   }
 }
