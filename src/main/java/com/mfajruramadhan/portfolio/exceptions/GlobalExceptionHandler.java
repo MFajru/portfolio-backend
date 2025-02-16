@@ -2,10 +2,8 @@ package com.mfajruramadhan.portfolio.exceptions;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.mfajruramadhan.portfolio.dto.Response;
-import jakarta.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.boot.web.server.WebServer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
