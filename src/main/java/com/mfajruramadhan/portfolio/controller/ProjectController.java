@@ -34,7 +34,7 @@ public class ProjectController {
     @GetMapping(value="", produces = "application/json")
     public ResponseEntity<Response<List<ProjectsResponse>>> getProjects() {
         List<Project> projects = projectService.getProjects();
-        List<ProjectsResponse> response = new ArrayList<ProjectsResponse>();
+        List<ProjectsResponse> response = new ArrayList<>();
 
         for (Project pro: projects) {
             response.add(new ProjectsResponse(pro.getId(), pro.getTitle(), pro.getCategory(), pro.getThumbnail()));
@@ -56,7 +56,7 @@ public class ProjectController {
 
         PostResponse res = new PostResponse();
         res.setMessage("Successfully created data!");
-        return new ResponseEntity<PostResponse>(res, HttpStatus.CREATED);
+        return new ResponseEntity<>(res, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}/edit", produces = "application/json")
@@ -80,10 +80,10 @@ public class ProjectController {
 
         if (isDeleted) {
             res.setMessage("Successfully deleted data!");
-            return new ResponseEntity<PostResponse>(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         }
         String message = "Data with id " + id + " is not found. Failed to delete data";
         res.setMessage(message);
-        return new ResponseEntity<PostResponse>(res, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
     }
 }
